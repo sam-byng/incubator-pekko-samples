@@ -62,10 +62,10 @@ final class ClusterClientReceptionist implements Extension {
 
     Materializer materializer = SystemMaterializer.get(system).materializer();
 
-    Http.get(system).bindAndHandleAsync(
+    Http.get(system).bindAndHandleAsync(req ->
       ClusterClientReceptionistServiceHandlerFactory.create(
         new ClusterClientReceptionistGrpcImpl(settings, pubSubMediator(), serialization, materializer, log),
-        system),
+        system).apply(req),
       ConnectHttp.toHost(settings.hostPort.hostname, settings.hostPort.port),
       materializer)
       .whenComplete((result, exc) -> {
